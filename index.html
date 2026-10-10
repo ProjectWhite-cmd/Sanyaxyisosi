@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Саня</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            user-select: none;
+        }
+
+        .photo-container {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .photo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: contrast(1.1) brightness(0.95);
+        }
+
+        .overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(28px, 8vw, 72px);
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 
+                0 0 10px #000,
+                0 0 20px #000,
+                4px 4px 0 #000,
+                -4px -4px 0 #000,
+                4px -4px 0 #000,
+                -4px 4px 0 #000;
+            white-space: nowrap;
+            z-index: 10;
+            animation: colorPulse 0.4s infinite alternate;
+        }
+
+        @keyframes colorPulse {
+            0%   { color: #ff0000; }
+            20%  { color: #00ff00; }
+            40%  { color: #ffff00; }
+            60%  { color: #ff00ff; }
+            80%  { color: #00ffff; }
+            100% { color: #ff4400; }
+        }
+
+        .bottom-section {
+            width: 100%;
+            padding: 20px 15px;
+            text-align: center;
+            background: linear-gradient(to top, #111, transparent);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .question {
+            font-size: clamp(22px, 6vw, 36px);
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            padding: 16px 40px;
+            font-size: clamp(18px, 5vw, 28px);
+            font-weight: 900;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 #800, 0 6px 15px rgba(0,0,0,0.5);
+            transition: transform 0.1s, box-shadow 0.1s;
+            min-width: 120px;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #800, 0 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .btn:hover {
+            background: #ff3333;
+        }
+
+        /* скрытый аудиоплеер */
+        audio {
+            display: none;
+        }
+
+        /* маленькая подсказка сверху */
+        .hint {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.4;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div class="hint">музыка уже орёт</div>
+
+    <div class="photo-container">
+        <img src="sanya.jpg" alt="Саня" class="photo">
+        <div class="overlay-text">Саня иди нахуй</div>
+    </div>
+
+    <div class="bottom-section">
+        <div class="question">сосал?</div>
+        <div class="buttons">
+            <button class="btn" onclick="answer()">ДА</button>
+            <button class="btn" onclick="answer()">ДА</button>
+        </div>
+    </div>
+
+    <audio id="music" src="music.mp3" loop autoplay></audio>
+
+    <script>
+        const audio = document.getElementById('music');
+
+        // пытаемся запустить музыку сразу
+        function startMusic() {
+            audio.volume = 1;
+            audio.play().catch(() => {
+                // браузеры блокируют автоплей — ждём любого клика
+                document.body.addEventListener('click', () => {
+                    audio.play();
+                }, { once: true });
+            });
+        }
+
+        startMusic();
+
+        // на всякий случай ещё раз при любом взаимодействии
+        document.addEventListener('touchstart', startMusic, { once: true });
+        document.addEventListener('click', startMusic, { once: true });
+
+        function answer() {
+            // просто мигаем текстом ещё сильнее или ничего не делаем — выбор уже сделан
+            const text = document.querySelector('.overlay-text');
+            text.style.animation = 'none';
+            setTimeout(() => {
+                text.style.animation = 'colorPulse 0.15s infinite alternate';
+            }, 10);
+
+            // можно добавить алерт, но лучше оставить чистым
+            // alert('правильно');
+        }
+
+        // блокируем зум и контекстное меню
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('gesturestart', e => e.preventDefault());
+    </script>
+</body>
+</html>
